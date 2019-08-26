@@ -1,0 +1,47 @@
+@import "lib/skel.scss";
+
+/* (c) Brian Jenkins | MIT licensed */
+
+// Header
+$header-accent-color: #2e7ac6;
+$header-background-color: #1f303d;
+$header-border-color: #dddddd;
+$header-foreground-color: #ffffff;
+
+// Main
+$main-accent-color: #2e7ac6;
+$main-background-color: #ffffff;
+$main-border-color: #dddddd;
+$main-foreground-color: #000000;
+
+// Footer
+$footer-accent-color: #2e7ac6;
+$footer-background-color: #1f303d;
+$footer-border-color: #dddddd;
+$footer-foreground-color: #ffffff;
+
+/* Basic */
+
+/* Utilities */
+
+.align-left {
+	text-align: left;
+}
+.align-left {
+	text-align: left;
+}
+.align-right {
+	text-align: right
+}
+.display-none {
+	display: none;
+}
+.float-left {
+	float: left;
+}
+.float-right {
+	float: right
+}
+.visibility-hidden {
+	visibility: hidden;
+}

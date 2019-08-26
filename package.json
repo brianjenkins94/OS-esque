@@ -1,0 +1,35 @@
+{
+  "name": "elegancss",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "rollup --config --watch",
+    "csscomb": "csscomb --config docs/css/.csscomb.json docs/css/style.scss docs/css/partials/*.scss",
+    "sassc": "sass --watch docs/css/style.scss docs/css/style.css --no-source-map",
+    "start": "ts-node index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianjenkins94/elegancss.git"
+  },
+  "author": "Brian Jenkins",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brianjenkins94/elegancss/issues"
+  },
+  "homepage": "https://github.com/brianjenkins94/elegancss#readme",
+  "dependencies": {
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.2",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "eslint": "^6.2.2",
+    "rollup": "^1.20.2",
+    "rollup-plugin-typescript": "^1.0.1",
+    "tslib": "^1.10.0"
+  }
+}
