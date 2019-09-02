@@ -1,18 +1,32 @@
 import { WindowComponent } from "./components/windowComponent";
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-document.addEventListener("DOMContentLoaded", async function(event) {
+function primeCanvas(width, height, canvas) {
+	canvas.width = width;
+	canvas.height = height;
+	canvas.style.width = width + "px";
+	canvas.style.height = height + "px";
+
+	const context = canvas.getContext("2d");
+
+	//context.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+	return context;
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
 	const components = {
 		"windowComponent": WindowComponent
 	};
 
 	for (const [componentName, ComponentConstructor] of Object.entries(components)) {
+		let isComponentImageLoaded = false;
+		let isReferenceImageLoaded = false;
+
 		document.querySelector("#main > table > tbody").innerHTML += `
 			<tr>
 				<td id="${componentName}Container"></td>
 				<td>
-					<img id="${componentName}Source" class="display-none" src="images/${componentName}.png" />
-					<canvas id="${componentName}Image"></canvas>
+					<canvas id="${componentName}ReferenceCanvas"></canvas>
 				</td>
 				<td>
 					<canvas id="${componentName}Diff"></canvas>
@@ -20,60 +34,68 @@ document.addEventListener("DOMContentLoaded", async function(event) {
 			</tr>
 		`;
 
-		document.getElementById(componentName + "Container").appendChild(new ComponentConstructor());
+		// componentContainer
+		const componentContainer = document.getElementById(componentName + "Container");
 
-		const scaleFactor = window.devicePixelRatio;
+		componentContainer.appendChild(new ComponentConstructor());
 
-		// Get dimensions from resultant canvas
-		const { width, height } = await html2canvas(document.getElementById(componentName + "Container"));
-
-		// referenceCanvas
-		const referenceCanvas = document.getElementById(componentName + "Image");
-
-		referenceCanvas.width = (width / scaleFactor);
-		referenceCanvas.height = (height / scaleFactor);
-		referenceCanvas.style.width = (width / scaleFactor) + "px";
-		referenceCanvas.style.height = (height / scaleFactor) + "px";
-
-		const referenceContext = referenceCanvas.getContext("2d");
-
-		referenceContext.scale(1 / scaleFactor, 1 / scaleFactor);
-
-		referenceContext.drawImage(document.getElementById(componentName + "Source"), 0, 0);
+		const width = componentContainer.clientWidth; // * window.devicePixelRatio;
+		const height = componentContainer.clientHeight; // * window.devicePixelRatio;
 
 		// componentCanvas
 		const componentCanvas = document.createElement("canvas");
 
-		componentCanvas.width = (width / scaleFactor);
-		componentCanvas.height = (height / scaleFactor);
-		componentCanvas.style.width = (width / scaleFactor) + "px";
-		componentCanvas.style.height = (height / scaleFactor) + "px";
+		const componentContext = primeCanvas(width, height, componentCanvas);
 
-		const componentContext = componentCanvas.getContext("2d");
+		const componentImage = new Image();
 
-		componentContext.scale(1 / scaleFactor, 1 / scaleFactor);
+		componentImage.addEventListener("load", function() {
+			componentContext.drawImage(componentImage, 0, 0);
 
-		componentContext.drawImage(await html2canvas(document.getElementById(componentName + "Container")), 0, 0);
+			isComponentImageLoaded = true;
 
-		const originalCanvasImageData = componentContext.getImageData(0, 0, width, height).data;
-		const referenceCanvasImageData = referenceContext.getImageData(0, 0, width, height).data;
+			if (isReferenceImageLoaded === true) {
+				pixelMatch();
+			}
+		});
+
+		componentImage.setAttribute("src", "images/" + componentName + "Reference.png");
+
+		// referenceCanvas
+		const referenceCanvas = document.getElementById(componentName + "ReferenceCanvas");
+
+		const referenceContext = primeCanvas(width, height, referenceCanvas);
+
+		const referenceImage = new Image();
+
+		referenceImage.addEventListener("load", function() {
+			referenceContext.drawImage(referenceImage, 0, 0);
+
+			isReferenceImageLoaded = true;
+
+			if (isComponentImageLoaded === true) {
+				pixelMatch();
+			}
+		});
+
+		referenceImage.setAttribute("src", "images/" + componentName + "Reference.png");
 
 		// diffCanvas
 		const diffCanvas = document.getElementById(componentName + "Diff");
 
-		diffCanvas.width = (width / scaleFactor);
-		diffCanvas.height = (height / scaleFactor);
-		diffCanvas.style.width = (width / scaleFactor) + "px";
-		diffCanvas.style.height = (height / scaleFactor) + "px";
-
-		const diffContext = diffCanvas.getContext("2d");
-
-		diffContext.scale(1 / scaleFactor, 1 / scaleFactor);
+		const diffContext = primeCanvas(width, height, diffCanvas);
 
 		const diff = diffContext.createImageData(width, height);
 
-		pixelmatch(originalCanvasImageData, referenceCanvasImageData, diff.data, width, height);
+		// pixelMatch()
+		function pixelMatch() {
+			const originalCanvasImageData = componentContext.getImageData(0, 0, width, height).data;
+			const referenceCanvasImageData = referenceContext.getImageData(0, 0, width, height).data;
+			const diffCanvasImageData = diff.data;
 
-		diffContext.putImageData(diff, 0, 0);
+			pixelmatch(originalCanvasImageData, referenceCanvasImageData, diffCanvasImageData, width, height);
+
+			diffContext.putImageData(diff, 0, 0);
+		}
 	}
 });

@@ -14,124 +14,128 @@ and limitations under the License.
 ***************************************************************************** */
 
 function __decorate(decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-}
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+	var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	return c > 3 && r && Object.defineProperty(target, key, r), r;
 }
 
 class ExtendedHTMLElement extends HTMLElement {
-    // Initialization
-    constructor() {
-        super();
-        this.events = {};
-    }
-    // Events
-    emit(name, detail) {
-        globalThis.dispatchEvent(new CustomEvent(name, Object.assign({}, detail)));
-        globalThis.dispatchEvent(new CustomEvent("*", Object.assign({}, detail)));
-    }
-    on(type, listener) {
-        globalThis.addEventListener(type, listener);
-        this.events["type"] = listener;
-    }
-    off(type) {
-        globalThis.removeEventListener(type, this.events[type]);
-    }
+	// Initialization
+	constructor() {
+		super();
+		this.events = {};
+	}
+	// Events
+	emit(name, detail) {
+		globalThis.dispatchEvent(new CustomEvent(name, Object.assign({}, detail)));
+		globalThis.dispatchEvent(new CustomEvent("*", Object.assign({}, detail)));
+	}
+	on(type, listener) {
+		globalThis.addEventListener(type, listener);
+		this.events["type"] = listener;
+	}
+	off(type) {
+		globalThis.removeEventListener(type, this.events[type]);
+	}
 }
 //# sourceMappingURL=extendedHTMLElement.js.map
 
 function CustomElement() {
-    return function (target) {
-        const tagName = target.name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-        customElements.define(tagName, target);
-        return customElements.get(tagName);
-    };
+	return function (target) {
+		const tagName = target.name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+		customElements.define(tagName, target);
+		return customElements.get(tagName);
+	};
 }
 //# sourceMappingURL=index.js.map
 
 let WindowComponent = class WindowComponent extends ExtendedHTMLElement {
-    // Initialization
-    constructor(options) {
-        super();
-    }
-    // Lifecycle callbacks
-    connectedCallback() {
-        const template = document.createElement("template");
-        template.innerHTML = `
+	// Initialization
+	constructor(options) {
+		super();
+	}
+	// Lifecycle callbacks
+	connectedCallback() {
+		const template = document.createElement("template");
+		template.innerHTML = `
 			<label>fewfewfewfewfew</label>
 		`;
-        this.appendChild(template.content);
-    }
+		this.appendChild(template.content);
+	}
 };
 WindowComponent = __decorate([
-    CustomElement()
+	CustomElement()
 ], WindowComponent);
 //# sourceMappingURL=windowComponent.js.map
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
+function primeCanvas(width, height, canvas) {
+	canvas.width = width;
+	canvas.height = height;
+	canvas.style.width = width + "px";
+	canvas.style.height = height + "px";
+	const context = canvas.getContext("2d");
+	//context.scale(window.devicePixelRatio, window.devicePixelRatio);
+	return context;
+}
 document.addEventListener("DOMContentLoaded", function (event) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const components = {
-            "windowComponent": WindowComponent
-        };
-        for (const [componentName, ComponentConstructor] of Object.entries(components)) {
-            document.querySelector("#main > table > tbody").innerHTML += `
+	const components = {
+		"windowComponent": WindowComponent
+	};
+	for (const [componentName, ComponentConstructor] of Object.entries(components)) {
+		let isComponentImageLoaded = false;
+		let isReferenceImageLoaded = false;
+		document.querySelector("#main > table > tbody").innerHTML += `
 			<tr>
 				<td id="${componentName}Container"></td>
 				<td>
-					<img id="${componentName}Source" class="display-none" src="images/${componentName}.png" />
-					<canvas id="${componentName}Image"></canvas>
+					<canvas id="${componentName}ReferenceCanvas"></canvas>
 				</td>
 				<td>
 					<canvas id="${componentName}Diff"></canvas>
 				</td>
 			</tr>
 		`;
-            document.getElementById(componentName + "Container").appendChild(new ComponentConstructor());
-            const scaleFactor = window.devicePixelRatio;
-            // Get dimensions from resultant canvas
-            const { width, height } = yield html2canvas(document.getElementById(componentName + "Container"));
-            // referenceCanvas
-            const referenceCanvas = document.getElementById(componentName + "Image");
-            referenceCanvas.width = (width / scaleFactor);
-            referenceCanvas.height = (height / scaleFactor);
-            referenceCanvas.style.width = (width / scaleFactor) + "px";
-            referenceCanvas.style.height = (height / scaleFactor) + "px";
-            const referenceContext = referenceCanvas.getContext("2d");
-            referenceContext.scale(1 / scaleFactor, 1 / scaleFactor);
-            referenceContext.drawImage(document.getElementById(componentName + "Source"), 0, 0);
-            // componentCanvas
-            const componentCanvas = document.createElement("canvas");
-            componentCanvas.width = (width / scaleFactor);
-            componentCanvas.height = (height / scaleFactor);
-            componentCanvas.style.width = (width / scaleFactor) + "px";
-            componentCanvas.style.height = (height / scaleFactor) + "px";
-            const componentContext = componentCanvas.getContext("2d");
-            componentContext.scale(1 / scaleFactor, 1 / scaleFactor);
-            componentContext.drawImage(yield html2canvas(document.getElementById(componentName + "Container")), 0, 0);
-            const originalCanvasImageData = componentContext.getImageData(0, 0, width, height).data;
-            const referenceCanvasImageData = referenceContext.getImageData(0, 0, width, height).data;
-            // diffCanvas
-            const diffCanvas = document.getElementById(componentName + "Diff");
-            diffCanvas.width = (width / scaleFactor);
-            diffCanvas.height = (height / scaleFactor);
-            diffCanvas.style.width = (width / scaleFactor) + "px";
-            diffCanvas.style.height = (height / scaleFactor) + "px";
-            const diffContext = diffCanvas.getContext("2d");
-            diffContext.scale(1 / scaleFactor, 1 / scaleFactor);
-            const diff = diffContext.createImageData(width, height);
-            pixelmatch(originalCanvasImageData, referenceCanvasImageData, diff.data, width, height);
-            diffContext.putImageData(diff, 0, 0);
-        }
-    });
+		// componentContainer
+		const componentContainer = document.getElementById(componentName + "Container");
+		componentContainer.appendChild(new ComponentConstructor());
+		const width = componentContainer.clientWidth; // * window.devicePixelRatio;
+		const height = componentContainer.clientHeight; // * window.devicePixelRatio;
+		// componentCanvas
+		const componentCanvas = document.createElement("canvas");
+		const componentContext = primeCanvas(width, height, componentCanvas);
+		const componentImage = new Image();
+		componentImage.addEventListener("load", function () {
+			componentContext.drawImage(componentImage, 0, 0);
+			isComponentImageLoaded = true;
+			if (isReferenceImageLoaded === true) {
+				pixelMatch();
+			}
+		});
+		componentImage.setAttribute("src", "images/" + componentName + "Reference.png");
+		// referenceCanvas
+		const referenceCanvas = document.getElementById(componentName + "ReferenceCanvas");
+		const referenceContext = primeCanvas(width, height, referenceCanvas);
+		const referenceImage = new Image();
+		referenceImage.addEventListener("load", function () {
+			referenceContext.drawImage(referenceImage, 0, 0);
+			isReferenceImageLoaded = true;
+			if (isComponentImageLoaded === true) {
+				pixelMatch();
+			}
+		});
+		referenceImage.setAttribute("src", "images/" + componentName + "Reference.png");
+		// diffCanvas
+		const diffCanvas = document.getElementById(componentName + "Diff");
+		const diffContext = primeCanvas(width, height, diffCanvas);
+		const diff = diffContext.createImageData(width, height);
+		// pixelMatch()
+		function pixelMatch() {
+			const originalCanvasImageData = componentContext.getImageData(0, 0, width, height).data;
+			const referenceCanvasImageData = referenceContext.getImageData(0, 0, width, height).data;
+			const diffCanvasImageData = diff.data;
+			pixelmatch(originalCanvasImageData, referenceCanvasImageData, diffCanvasImageData, width, height);
+			diffContext.putImageData(diff, 0, 0);
+		}
+	}
 });
