@@ -3,12 +3,13 @@ import { WindowComponent } from "./components/windowComponent";
 function primeCanvas(width, height, canvas) {
 	canvas.width = width;
 	canvas.height = height;
-	canvas.style.width = width + "px";
-	canvas.style.height = height + "px";
+
+	canvas.style.width = (width / window.devicePixelRatio) + "px";
+	canvas.style.height = (height / window.devicePixelRatio) + "px";
 
 	const context = canvas.getContext("2d");
 
-	//context.scale(window.devicePixelRatio, window.devicePixelRatio);
+	context.scale(window.devicePixelRatio, window.devicePixelRatio);
 
 	return context;
 }
@@ -29,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 					<canvas id="${componentName}ReferenceCanvas"></canvas>
 				</td>
 				<td>
-					<canvas id="${componentName}Diff"></canvas>
+					<canvas id="${componentName}DiffCanvas"></canvas>
 				</td>
 			</tr>
 		`;
@@ -39,8 +40,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 		componentContainer.appendChild(new ComponentConstructor());
 
-		const width = componentContainer.clientWidth; // * window.devicePixelRatio;
-		const height = componentContainer.clientHeight; // * window.devicePixelRatio;
+		const width = componentContainer.offsetWidth * window.devicePixelRatio;
+		const height = componentContainer.offsetHeight * window.devicePixelRatio;
 
 		// componentCanvas
 		const componentCanvas = document.createElement("canvas");
@@ -50,6 +51,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		const componentImage = new Image();
 
 		componentImage.addEventListener("load", function() {
+			console.log("wrote!");
+
 			componentContext.drawImage(componentImage, 0, 0);
 
 			isComponentImageLoaded = true;
@@ -59,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 		});
 
-		componentImage.setAttribute("src", "images/" + componentName + "Reference.png");
+		componentImage.setAttribute("src", "images/" + componentName + ".png");
 
 		// referenceCanvas
 		const referenceCanvas = document.getElementById(componentName + "ReferenceCanvas");
@@ -81,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		referenceImage.setAttribute("src", "images/" + componentName + "Reference.png");
 
 		// diffCanvas
-		const diffCanvas = document.getElementById(componentName + "Diff");
+		const diffCanvas = document.getElementById(componentName + "DiffCanvas");
 
 		const diffContext = primeCanvas(width, height, diffCanvas);
 

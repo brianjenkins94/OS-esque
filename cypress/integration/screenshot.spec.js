@@ -7,11 +7,11 @@ context("Click!", () => {
 
 	it("Take screenshot", () => {
 		cy.get("#main > table > tbody > tr > td:first-child").each((element, index) => {
-			let id = element[0].id;
+			let [{ id }] = element;
 
 			id = id.substring(0, id.length - "Container".length);
 
 			cy.get(element).screenshot(id);
-		})
+		});
 	});
 });
