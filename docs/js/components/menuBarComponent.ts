@@ -2,7 +2,7 @@ import { ExtendedHTMLElement } from "./abstract/extendedHTMLElement";
 import { CustomElement } from "../decorators";
 
 @CustomElement()
-export class WindowComponent extends ExtendedHTMLElement {
+export class MenuBarComponent extends ExtendedHTMLElement {
 
 	// Initialization
 
@@ -16,16 +16,9 @@ export class WindowComponent extends ExtendedHTMLElement {
 		const template = document.createElement("template");
 
 		template.innerHTML = `
-			<header class="row">
-				<div class="2u controls">
-					<button class="control close"></button>
-					<button class="control minimize"></button>
-					<button class="control maximize"></button>
-				</div>
-				<div class="8u title">Window</div>
-			</header>
-			<main>
-			</main>
+			<ul>
+				<li>Finder</li>
+			</ul>
 		`;
 
 		this.appendChild(template.content);

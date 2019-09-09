@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "build": "rollup --config --watch",
-    "csscomb": "csscomb --config docs/css/.csscomb.json docs/css/style.scss docs/css/partials/*.scss",
-    "cypress": "watch --wait=1 \"cypress run --spec cypress/integration/screenshot.spec.js && find docs/images/ -type f -mindepth 2 -exec mv \"{}\" docs/images/ \\; && rmdir docs/images/* &> /dev/null\" docs/css docs/js",
+    "csscomb": "csscomb --config docs/css/.csscomb.json docs/css/style.scss docs/css/components/*.scss",
+    "cypress": "exit 0; watch --wait=1 \"cypress run --spec cypress/integration/screenshot.spec.js && find docs/images/ -type f -mindepth 2 -exec mv \"{}\" docs/images/ \\; && rmdir docs/images/* &> /dev/null\" docs/css docs/js",
     "sassc": "sass --watch docs/css/style.scss docs/css/style.css --no-source-map",
     "serve": "npx npx http-server docs/ -c-1 -o",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -33,7 +33,7 @@ class ExtendedHTMLElement extends HTMLElement {
     }
     on(type, listener) {
         globalThis.addEventListener(type, listener);
-        this.events["type"] = listener;
+        this.events[type] = listener;
     }
     off(type) {
         globalThis.removeEventListener(type, this.events[type]);
@@ -59,35 +59,13 @@ let WindowComponent = class WindowComponent extends ExtendedHTMLElement {
     connectedCallback() {
         const template = document.createElement("template");
         template.innerHTML = `
-			<style>
-				window-component {
-					border: 1px solid black;
-					display: block;
-				}
-				window-component > header {
-					height: 22px;
-				}
-				window-component > header > ul {
-					margin: 0;
-					padding: 0;
-					list-style-type: none;
-				}
-				window-component > header > ul > li {
-					float: left;
-				}
-				window-component > main {
-					min-width: 100%;
-					min-height: 94px;
-				}
-			</style>
-
-			<header>
-				<ul>
-					<li><i class="fa fa-circle"></i></li>
-					<li><i class="fa fa-circle"></i></li>
-					<li><i class="fa fa-circle"></i></li>
-				</ul>
-				<span>Window</span>
+			<header class="row">
+				<div class="2u controls">
+					<button class="control close"></button>
+					<button class="control minimize"></button>
+					<button class="control maximize"></button>
+				</div>
+				<div class="8u title">Window</div>
 			</header>
 			<main>
 			</main>
@@ -98,76 +76,44 @@ let WindowComponent = class WindowComponent extends ExtendedHTMLElement {
 WindowComponent = __decorate([
     CustomElement()
 ], WindowComponent);
+//# sourceMappingURL=windowComponent.js.map
 
-function primeCanvas(width, height, canvas) {
-    canvas.width = width;
-    canvas.height = height;
-    canvas.style.width = (width / window.devicePixelRatio) + "px";
-    canvas.style.height = (height / window.devicePixelRatio) + "px";
-    const context = canvas.getContext("2d");
-    context.scale(window.devicePixelRatio, window.devicePixelRatio);
-    return context;
-}
+let MenuBarComponent = class MenuBarComponent extends ExtendedHTMLElement {
+    // Initialization
+    constructor(options) {
+        super();
+    }
+    // Lifecycle callbacks
+    connectedCallback() {
+        const template = document.createElement("template");
+        template.innerHTML = `
+			<ul>
+				<li>Finder</li>
+			</ul>
+		`;
+        this.appendChild(template.content);
+    }
+};
+MenuBarComponent = __decorate([
+    CustomElement()
+], MenuBarComponent);
+//# sourceMappingURL=menuBarComponent.js.map
+
 document.addEventListener("DOMContentLoaded", function (event) {
     const components = {
-        "windowComponent": WindowComponent
+        "windowComponent": WindowComponent,
+        "menuBarComponent": MenuBarComponent
     };
     for (const [componentName, ComponentConstructor] of Object.entries(components)) {
-        let isComponentImageLoaded = false;
-        let isReferenceImageLoaded = false;
-        document.querySelector("#main > table > tbody").innerHTML += `
+        const template = document.createElement("template");
+        template.innerHTML = `
 			<tr>
-				<td id="${componentName}Container"></td>
-				<td>
-					<canvas id="${componentName}ReferenceCanvas"></canvas>
-				</td>
-				<td>
-					<canvas id="${componentName}DiffCanvas"></canvas>
-				</td>
+				<td id="${componentName}Container" style="background: url('images/${componentName}Reference.png') no-repeat 1px 1px;"></td>
 			</tr>
 		`;
+        document.querySelector("#main > table > tbody").appendChild(template.content);
         // componentContainer
         const componentContainer = document.getElementById(componentName + "Container");
         componentContainer.appendChild(new ComponentConstructor());
-        const width = componentContainer.offsetWidth * window.devicePixelRatio;
-        const height = componentContainer.offsetHeight * window.devicePixelRatio;
-        // componentCanvas
-        const componentCanvas = document.createElement("canvas");
-        const componentContext = primeCanvas(width, height, componentCanvas);
-        const componentImage = new Image();
-        componentImage.addEventListener("load", function () {
-            console.log("wrote!");
-            componentContext.drawImage(componentImage, 0, 0);
-            isComponentImageLoaded = true;
-            if (isReferenceImageLoaded === true) {
-                pixelMatch();
-            }
-        });
-        componentImage.setAttribute("src", "images/" + componentName + ".png");
-        // referenceCanvas
-        const referenceCanvas = document.getElementById(componentName + "ReferenceCanvas");
-        const referenceContext = primeCanvas(width, height, referenceCanvas);
-        const referenceImage = new Image();
-        referenceImage.addEventListener("load", function () {
-            referenceContext.drawImage(referenceImage, 0, 0);
-            isReferenceImageLoaded = true;
-            if (isComponentImageLoaded === true) {
-                pixelMatch();
-            }
-        });
-        referenceImage.setAttribute("src", "images/" + componentName + "Reference.png");
-        // diffCanvas
-        const diffCanvas = document.getElementById(componentName + "DiffCanvas");
-        const diffContext = primeCanvas(width, height, diffCanvas);
-        const diff = diffContext.createImageData(width, height);
-        // pixelMatch()
-        function pixelMatch() {
-            const originalCanvasImageData = componentContext.getImageData(0, 0, width, height).data;
-            const referenceCanvasImageData = referenceContext.getImageData(0, 0, width, height).data;
-            const diffCanvasImageData = diff.data;
-            pixelmatch(originalCanvasImageData, referenceCanvasImageData, diffCanvasImageData, width, height);
-            diffContext.putImageData(diff, 0, 0);
-        }
     }
 });
-//# sourceMappingURL=main.js.map

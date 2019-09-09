@@ -1,0 +1,76 @@
+/* Window Component */
+
+// Header
+$header-height: 22px;
+$window-header-accent-color-top: rgba(255, 0, 255, 0); // FIXME: Wrong color
+$window-header-accent-color-bottom: rgba(255, 0, 255, 0); // FIXME: Wrong color
+$window-header-background-color: linear-gradient(to bottom, #e6e6e6, #e6e6e6); // FIXME: Wrong gradient
+
+// Header Controls
+$window-control-mask-color: rgba(0, 0, 0, 0.05); // FIXME: Wrong color
+$window-control-close-color: #ff6159; // FIXME: Wrong color
+$window-control-minimize-color: #ffbd2e; // FIXME: Wrong color
+$window-control-maximize-color: #28c941; // FIXME: Wrong color
+
+// Header Title
+$window-title-font-size: 0.8rem; // FIXME: Wrong value
+
+// Main
+$window-separator-color: rgba(255, 0, 255, 0); // FIXME: Wrong color
+$window-background-color: #ededed;
+
+window-component {
+	display: block;
+
+	& > header {
+		height: $header-height;
+		border-top: 1px solid $window-header-accent-color-top;
+		border-bottom: 1px solid $window-header-accent-color-bottom;
+		border-top-left-radius: 4px;
+		border-top-right-radius: 4px;
+		background-image: $window-header-background-color;
+
+		& > .controls {
+			white-space: nowrap;
+
+			& > .control {
+				width: 12px;
+				height: 12px;
+				margin-left: 4px;
+				padding: 0;
+				border: 1px solid $window-control-mask-color;
+				border-radius: 100%;
+
+				&:first-child {
+					margin-left: 8px;
+				}
+
+				&.close {
+					background-color: $window-control-close-color;
+				}
+
+				&.minimize {
+					background-color: $window-control-minimize-color;
+				}
+
+				&.maximize {
+					background-color: $window-control-maximize-color;
+				}
+			}
+		}
+
+		& > .title {
+			font-size: $window-title-font-size;
+			line-height: $header-height;
+			text-align: center;
+			text-shadow: 0 1px 1px #ffffff;
+		}
+	}
+
+	& > main {
+		min-width: 12rem;
+		min-height: 2rem;
+		border-top: 1px solid $window-separator-color;
+		background-color: $window-background-color;
+	}
+}

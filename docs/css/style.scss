@@ -22,26 +22,37 @@ $footer-foreground-color: #ffffff;
 
 /* Basic */
 
+/* Components */
+
+@import "components/windowComponent.scss";
+@import "components/menuBarComponent.scss";
+
 /* Utilities */
 
 .align-left {
 	text-align: left;
 }
-.align-left {
-	text-align: left;
+
+.align-center {
+	text-align: center;
 }
+
 .align-right {
-	text-align: right
+	text-align: right;
 }
+
 .display-none {
 	display: none;
 }
+
 .float-left {
 	float: left;
 }
+
 .float-right {
-	float: right
+	float: right;
 }
+
 .visibility-hidden {
 	visibility: hidden;
 }

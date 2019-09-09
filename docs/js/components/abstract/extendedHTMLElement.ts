@@ -17,7 +17,7 @@ export abstract class ExtendedHTMLElement extends HTMLElement {
 	public on(type, listener) {
 		globalThis.addEventListener(type, listener);
 
-		this.events["type"] = listener;
+		this.events[type] = listener;
 	}
 
 	public off(type) {
