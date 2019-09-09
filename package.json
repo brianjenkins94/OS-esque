@@ -1,5 +1,5 @@
 {
-  "name": "elegancss",
+  "name": "os-esque",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brianjenkins94/elegancss.git"
+    "url": "git+https://github.com/brianjenkins94/OS-esque.git"
   },
   "author": "Brian Jenkins",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/brianjenkins94/elegancss/issues"
+    "url": "https://github.com/brianjenkins94/OS-esque/issues"
   },
-  "homepage": "https://github.com/brianjenkins94/elegancss#readme",
+  "homepage": "https://github.com/brianjenkins94/OS-esque#readme",
   "dependencies": {
     "ts-node": "latest",
     "typescript": "latest"
